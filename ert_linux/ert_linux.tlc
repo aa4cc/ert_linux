@@ -29,7 +29,10 @@
 
 %assign TargetRegistMutexOp   = 1 
 %assign TargetRegistSynchroOp = 1
+
+%if FEVAL("verLessThan", "matlab", "9.2")
 %include "commontargetlib.tlc"
+%endif
 
 %include "codegenentry.tlc"
 %include "ert_linux_genfiles.tlc"
