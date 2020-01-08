@@ -131,6 +131,12 @@ ADDITIONAL_LDFLAGS      = |>ADDITIONAL_LDFLAGS<|
 DEBUG_BUILD             = 0
 
 #--------------------------- Model and reference models -----------------------
+
+ifneq (,$(wildcard ert_main.c))
+ERT_MAIN_OBJ_IF_NEEDED=ert_main.o
+endif
+
+#--------------------------- Model and reference models -----------------------
 MODELLIB                  = |>MODELLIB<|
 MODELREF_LINK_LIBS        = |>MODELREF_LINK_LIBS<|
 MODELREF_INC_PATH         = |>START_MDLREFINC_EXPAND_INCLUDES<|-I|>MODELREF_INC_PATH<| |>END_MDLREFINC_EXPAND_INCLUDES<|
@@ -350,7 +356,7 @@ ifeq ($(SFCN),0)
         PREBUILT_SRCS      = $(MODULES)
         PREBUILT_OBJS      = $(addsuffix .o, $(basename $(PREBUILT_SRCS)))
         PRODUCT            = $(MODEL)
-        BIN_SETTING        = $(LD) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) -o $(PRODUCT)
+        BIN_SETTING        = $(LD) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) -o $(PRODUCT) $(ERT_MAIN_OBJ_IF_NEEDED)
         BUILD_PRODUCT_TYPE = "executable"
       else
         SRCS               += $(MODULES) $(MODEL).$(TARGET_LANG_EXT) $(EXT_SRC)
@@ -361,7 +367,7 @@ ifeq ($(SFCN),0)
         else
           # ERT standalone
           PRODUCT            = $(RELATIVE_PATH_TO_ANCHOR)/$(MODEL)
-          BIN_SETTING        = $(LD) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) -o $(PRODUCT)
+          BIN_SETTING        = $(LD) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) -o $(PRODUCT) $(ERT_MAIN_OBJ_IF_NEEDED)
           BUILD_PRODUCT_TYPE = "executable"
         endif
       endif
@@ -408,8 +414,12 @@ ifneq ($(findstring .cpp,$(suffix $(SRCS), $(USER_SRCS), $(PREBUILT_SRCS))),)
   LD = $(CPP)
 endif
 #----------------------------- Lint (sol2 only) --------------------------------
-
+ifeq (,$(wildcard ert_main.c))
 LINT_SRCS = $(MATLAB_ROOT)/rtw/c/src/common/rt_main.c
+else
+LINT_SRCS = ert_main.c
+endif
+
 LINT_SRCS += $(MODEL).$(TARGET_LANG_EXT) $(MODULES) $(USER_SRCS) $(S_FUNCTIONS)
 LINTOPTSFILE = $(MODEL).lintopts
 
@@ -449,7 +459,7 @@ $(PRODUCT) : $(PREBUILT_OBJS) $(OBJS) $(SHARED_LIB) $(LIBS) $(SRC_DEP) $(MODELLI
 $(PRODUCT) : $(OBJS) $(SHARED_LIB) $(LIBS) $(SRC_DEP) $(MODELREF_LINK_LIBS)
 	@echo "### Created $(BUILD_PRODUCT_TYPE): $@"
     else
-$(PRODUCT) : $(OBJS) $(SHARED_LIB) $(LIBS) $(SRC_DEP) $(MODELREF_LINK_LIBS)
+$(PRODUCT) : $(ERT_MAIN_OBJ_IF_NEEDED) $(OBJS) $(SHARED_LIB) $(LIBS) $(SRC_DEP) $(MODELREF_LINK_LIBS)
 	$(BIN_SETTING) $(LINK_OBJS) $(MODELREF_LINK_LIBS) $(SHARED_LIB) $(LIBFIXPT) $(LIBS)  $(SYSLIBS)
 	@echo "### Created $(BUILD_PRODUCT_TYPE): $@"
     endif
