@@ -12,3 +12,4 @@ Alternatively, one can replace `username` by `@sudo` which would add the same ca
 
 ## Connection to the remote host
 To run the application on the remote target, the host PC connects to the remote target via SSH. To do so, target SSH key has to be either stored in the Simulink model folder under the name `target-ssh-key` or in folder visible by the ssh command.
+
