@@ -61,7 +61,10 @@ Newest version of this project can be found at
 Tested Hardware Platforms and Systems
 -------------------------------------
 
-This target has been tested with Matlab R2017a
+This target has been tested with Matlab R2019b
 and Humusoft MF624 cards with Linux kernels up to 4.19 RT
 on 64-bit x86 Debian GNU/Linux system, ARM based Xilinx Zynq
 systems and AArch64 Nvidia based systems.
+
+Big thanks for help with update to R2019b and other advices
+to Jan Houska <Houska@humusoft.cz> .
