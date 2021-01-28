@@ -1,0 +1,55 @@
+%% SYSTLC: NuttX Embedded Coder TMF: ert_nuttx.tmf MAKE: make_rtw \
+%%    EXTMODE: ext_comm
+%%
+%% Copyright 1994-2011 The MathWorks, Inc.
+%% Copyright 2013 Michal Sojka <sojkam1@fel.cvut.cz>
+%% Copyright 2014-2020 Pavel Pisa <pisa@cmp.felk.cvut.cz>
+%% Abstract: Embedded real-time system target file for NuttX OS.
+%%
+%selectfile NULL_FILE
+
+%assign CodeFormat = "Embedded-C"
+
+%assign TargetType = "RT"
+%assign Language   = "C"
+%if !EXISTS("AutoBuildProcedure")
+  %assign AutoBuildProcedure = !GenerateSampleERTMain
+%endif
+
+%assign RateBasedStepFcn = 1 	/% Generate only rate-based step functions %/
+
+%% The model_SetEventsForThisBaseRate function is not required for the
+%% VxWorks environment, i.e., when using an operating system.
+%assign SuppressSetEventsForThisBaseRateFcn = (TargetOS == "VxWorksExample")
+%if !EXISTS("InlineSetEventsForThisBaseRateFcn")
+  %assign InlineSetEventsForThisBaseRateFcn  = TLC_TRUE
+%endif
+%if !EXISTS("SuppressMultiTaskScheduler")
+  %assign SuppressMultiTaskScheduler = TLC_TRUE
+%endif
+
+%assign TargetRegistMutexOp   = 1
+%assign TargetRegistSynchroOp = 1
+
+%if FEVAL("verLessThan", "matlab", "9.2")
+%include "commontargetlib.tlc"
+%endif
+
+%include "codegenentry.tlc"
+%include "ert_linux_genfiles.tlc"
+
+/%
+  BEGIN_RTW_OPTIONS
+
+  rtwgensettings.DerivedFrom = 'ert.tlc';
+
+  %----------------------------------------%
+  % Configure code generation settings %
+  %----------------------------------------%
+
+  rtwgensettings.BuildDirSuffix = '_ert_nuttx';
+  rtwgensettings.Version = '1';
+  rtwgensettings.SelectCallback = 'ert_linux_select_callback_handler(hDlg, hSrc)';
+
+  END_RTW_OPTIONS
+ %/
