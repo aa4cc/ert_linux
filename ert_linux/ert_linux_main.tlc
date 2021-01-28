@@ -254,7 +254,9 @@
       (void *)(argv);
     %endif
 
+  #ifndef WITHOUT_MLOCK
     CHECKE(mlockall(MCL_CURRENT | MCL_FUTURE));
+  #endif
 
     /* Initialize model */
     %<modelName>_initialize();
