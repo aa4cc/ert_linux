@@ -163,6 +163,7 @@ include $(NUTTX_EXPORT)/scripts/Make.defs
 NUTTX_INCLUDES = -isystem $(NUTTX_EXPORT)/include
 
 SYSTEM_LIBS += --start-group $(LDLIBS) $(EXTRA_LIBS) --end-group
+ELF_MODULE_LIBS = --start-group $(EXTRA_LIBS) --end-group
 
 LDFLAGS += -L $(NUTTX_EXPORT)/libs
 
@@ -307,10 +308,11 @@ $(PRODUCT) : $(OBJS) $(LIBS)
 	@echo "### Created object modules: $@"
     else
 $(PRODUCT) : $(OBJS) $(LIBS) $(MODELREF_LINK_LIBS)
+	[ ! -e  $(ELF_FILE_LDSCRIPT) ] || \
 	$(LD) $(LDFLAGS) $(ADDITIONAL_LDFLAGS) -o $(PRODUCT).elf \
 	  -r -e main -T $(ELF_FILE_LDSCRIPT) \
 	  -Map $(1).elf.map \
-	  $(LINK_OBJS) $(MODELREF_LINK_LIBS_GROUP) $(LIBS)
+	  $(LINK_OBJS) $(MODELREF_LINK_LIBS_GROUP) $(LIBS) $(ELF_MODULE_LIBS)
 	$(BIN_SETTING) $(LINK_OBJS) $(MODELREF_LINK_LIBS_GROUP) $(LIBS)  $(SYSTEM_LIBS)
 	@echo "### Created $(BUILD_PRODUCT_TYPE): $@"
     endif
